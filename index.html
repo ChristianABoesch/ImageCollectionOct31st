@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    body{
+      margin:0;
+      background-color: #a390e3;
+      background-image: linear-gradient(to top, #FFFFFF, #a390e3);
+      background-repeat: no-repeat;
+      text-align: center;
+    }
+    #container{
+      width: 100vw;
+      height: 100vh;
+    }
+    .slide{
+      width: 100%;
+      height: 75%;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      display: block;
+      position:absolute;
+      transition: 2s;
+    }
+    #prev{
+      position: absolute;
+      bottom: -225px;
+      left: 10px;
+    }
+    #next{
+      position: absolute;
+      bottom: -225px;
+      right: 10px;
+    }
+    #numContainer{
+      position: absolute;
+      width: 60%;
+      left: 20%;
+      text-align:center;
+      bottom: -225px;
+    }
+    .active{
+      background:gold;
+    }
+    .playButton {
+      background-color: #90C7E3;
+      background-image: radial-gradient(blue, orange);
+      background-repeat: no-repeat;
+      color: #ffffff;
+      padding: 10px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      margin:10px
+    }
+    .stopButton {
+      background-color: #555555;
+      background-image: radial-gradient(orange, blue);
+      background-repeat: no-repeat;
+      color: #000000;
+      padding: 10px;
+      border-radius: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      margin:10px
+    }
+    .medium-btn {
+      width: 70px;
+      height: 30px;
+    }
+    .block {
+      display: block;
+      width: 100%;
+      border: none;
+      background-color: #90C7E3;
+      color: #555555;
+      padding: 14px 28px;
+      font-size: 20px;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .accordion {
+    	background-color: #442b15;
+      background-image: linear-gradient(to bottom, #c2844d, #442b15);
+      background-repeat: no-repeat;
+    	color: #ffffff;
+    	cursor: pointer;
+    	padding: 18px;
+    	width: 100%;
+    	border: none;
+    	text-align: center;
+    	outline: none;
+    	font-size: 30px;
+    	transition: 0.4s;
+      font-family: 'Courier New', Courier, monospace;
+	  }
+
+	  .active, .accordion:hover {
+	    background-color: #000000;
+	  }
+
+	  .panel {
+ 	    padding: 0 18px;
+      background-color: #ffa200;
+      background-image: linear-gradient(to top, #ab6a00, #ffa200);
+      background-repeat: no-repeat;
+      color: #2c2b2b;
+      text-align: center;
+	    max-height: 0;
+	    overflow: hidden;
+      font-size: 15px;
+	    transition: max-height 0.2s ease-out;
+      font-family: 'Courier New', Courier, monospace;
+	  }
+  </style>
+  <script>
+    var allImages = [];
+    var allPrompts = [];
+    var currentSlide = 0; 
+
+    function start(){
+      
+      allImages = ['images/a-series-of-shapes-photorealistic-digital-art-1.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-2.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-3.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-4.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-5.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-6.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-7.png',
+          'images/a-series-of-shapes-photorealistic-digital-art-8.png']
+      
+      allPrompts = ['Series of shapes #1',
+          'Series of shapes #2',
+          'Series of shapes #3',
+          'Series of shapes #4',
+          'Series of shapes #5',
+          'Series of shapes #6',
+          'Series of shapes #7',
+          'Series of shapes #8']
+      
+      var markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<div class='slide' style='background-image:url(" + allImages[i] + ")'></div>"
+      }
+      document.getElementById("container").innerHTML = markup;
+
+      markup = "";
+      for(var i = 0; i < allImages.length; i++){
+        markup += "<button onclick='numClicked(" + i + ")' class='num'>" + (i + 1) + "</button>"
+      }
+      document.getElementById("numContainer").innerHTML = markup;
+
+      goToCurrentSlide();
+    }
+
+    var goPrev = function(){
+      currentSlide = currentSlide - 1
+      if(currentSlide < 0){
+        currentSlide = allImages.length;
+      }
+      goToCurrentSlide();
+    }
+
+    var goNext = function(){
+      currentSlide = currentSlide + 1;
+      if(currentSlide >= allImages.length){
+        currentSlide = 0;
+      }
+      goToCurrentSlide();
+    }
+
+    var numClicked = function(n){
+      currentSlide = n;
+      goToCurrentSlide(); 
+    }
+
+    var goToCurrentSlide = function(){
+      var allImgObjs = document.getElementsByClassName("slide")
+      var allNumObjs = document.getElementsByClassName("num")
+      var allPromptObjs = document.getElementsByClassName("prompt")
+      
+      // Update the prompt
+      var markup = "<h3>" + allPrompts[currentSlide] + "</h3>"
+      document.getElementById("promptContainer").innerHTML = markup;
+
+      for(var i = 0; i < allImgObjs.length; i++){
+        if(i==currentSlide){
+          allImgObjs[i].style.opacity = "1";
+          allNumObjs[i].className = "num active"; 
+        }
+        else{
+          allImgObjs[i].style.opacity = "0";
+          allNumObjs[i].className = "num"; 
+        }
+      }
+    }
+
+    function playOne() {
+      audio = new Audio('music/Podcast Song 1.m4a');
+      audio.play();
+      intervalId = window.setInterval(function(){
+        goNext();
+      }, 2000);
+    }
+
+    function playTwo() {
+      audio = new Audio('music/Podcast Song 2.m4a');
+      audio.play();
+      intervalId = window.setInterval(function(){
+        goNext();
+      }, 2000);
+    }
+
+    function stop() {
+      clearInterval(intervalId);
+      audio.pause();
+    }
+
+  </script>
+</head>
+
+<body onload='start()'>
+
+  <button class="accordion">About this page</button>
+  <div class="panel">
+    <ul><strong>This page is an experiment to test both Stable Diffusion and DALL-E 2's approach on a vague and simple prompt.</strong></ul>
+    <ul><strong>This page's prompt is "A series of shapes".</strong></ul>
+  </div>
+  <p>Select your mood of music</p>
+  <button onclick="playOne()" class="playButton">Music button 1</button>
+  <button onclick="stop()" class="stopButton">Stop music</button>
+  <button onclick="playTwo()" class="playButton">Music button 2</button>
+  <button class="accordion">Click here for a spoiler</button>
+  <div class="panel">
+    <ul><strong>The first half of these images was generated by DALL-E 2. This second half was generated by Stable Diffusion.</strong></ul>
+    <ul><strong>Different AI models are capable of interpreting the same concepts and strings of words in a unique way.</strong></ul>
+  </div>
+
+  <div id='promptContainer'>
+    <h1 class='prompt'></h1>
+  </div>
+
+  <div id='container'>
+  </div>
+  <div id='numContainer'>
+  </div>
+  
+  <button onclick='goPrev()' id='prev'> Prev </button>
+  <button onclick='goNext()' id='next'> Next </button>
+  <p>Tune in next time for a combination of concepts from both this and the previous page!</p>
+
+  <p>Music by Christian Boesch</p>
+
+  <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.maxHeight) {
+          panel.style.maxHeight = null;
+        } else {
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        } 
+      });
+    }
+  </script>
+
+</body>
+
+</html>
